@@ -8,6 +8,7 @@ import os
 import threading
 import ast
 import glob
+import time
 class genetic_alg(threading.Thread):
     def __init__(self, pop_control_obj, Fitness_func_for_prob1_obj, Selection, saved_folder, thread_name, HowMany_Thread):
         threading.Thread.__init__(self)
@@ -121,7 +122,12 @@ class genetic_alg(threading.Thread):
             each_RandomChoice_chro = []
             each_RandomChoice_Fitness = []
             if "make connection" in file_name:
-                if self.thread_name not in file_name:
+                thread_id = int( self.thread_name[self.thread_name.find("thread number")+len("thread number"):])
+                if thread_id == self.HowMany_Thread-1:
+                    next_thread = 0
+                else:
+                    next_thread = thread_id + 1
+                if self.thread_name not in file_name and "thread number {}".format(next_thread) in file_name:
                     file = open(file_name)
                     csvreader = csv.reader(file)
                     row_num = 0
@@ -129,7 +135,8 @@ class genetic_alg(threading.Thread):
                         row_num+=1
                         # each_RandomChoice_chro.append(ast.literal_eval(row[0]))
                         # each_RandomChoice_Fitness.append(float(row[1]))
-                        if row_num <= int(len(self.pop)/(8*(self.HowMany_Thread-1))):
+                        # if row_num <= int(len(self.pop)/(8*(self.HowMany_Thread-1))):
+                        if row_num <= int(len(self.pop)/(8)):
                             each_chromosomesThatShouldAppend.append(ast.literal_eval(row[0]))
                             each_FitnessesShouldAppend.append(float(row[1]))
                         else:
@@ -138,9 +145,10 @@ class genetic_alg(threading.Thread):
        
                     mate_pop = self.update_prob(each_RandomChoice_Fitness)
                     try:
-                        selected = np.random.choice(len(each_RandomChoice_chro), size=math.ceil(len(self.pop)/(8*(self.HowMany_Thread-1))), p=mate_pop)
+                        # selected = np.random.choice(len(each_RandomChoice_chro), size=math.ceil(len(self.pop)/(8*(self.HowMany_Thread-1))), p=mate_pop)
+                        selected = np.random.choice(len(each_RandomChoice_chro), size=math.ceil(len(self.pop)/(8)), p=mate_pop)
                     except:            
-                        selected = np.random.choice(len(each_RandomChoice_chro), size=math.ceil(len(self.pop)/(8*(self.HowMany_Thread-1))))
+                        selected = np.random.choice(len(each_RandomChoice_chro), size=math.ceil(len(self.pop)/(8)))
 
                     each_RandomChoice_chro = np.array(each_RandomChoice_chro)
                     each_RandomChoice_chro = list(each_RandomChoice_chro[selected])
@@ -157,7 +165,6 @@ class genetic_alg(threading.Thread):
                         chromosomesThatShouldAppend.append(i)
                         FitnessesShouldAppend.append(each_FitnessesShouldAppend[index])
 
-        # print("in existed = ", len(self.pop) - len(chromosomesThatShouldAppend) - len(RandomChoice_Fitness))
         self.pop = self.pop[:len(self.pop) - len(chromosomesThatShouldAppend) - len(RandomChoice_Fitness)]
         self.fitnesses = self.fitnesses[:len(self.fitnesses) - len(FitnessesShouldAppend) - len(RandomChoice_Fitness)]
         
@@ -224,7 +231,7 @@ class genetic_alg(threading.Thread):
                 simulation_obj = simulation()
                 self.simulation(people = self.pop[self.fitnesses.index(max(self.fitnesses))][:], simulation_obj = simulation_obj)
                 cv.imwrite("{}/images/{}_{}.png".format(self.destination_folder, self.thread_name,iters), simulation_obj.image)
-            if iters%100 == 0:
+            if iters%20 == 0:
                 simulation_obj = simulation()
                 self.simulation(people = self.pop[self.fitnesses.index(max(self.fitnesses))][:], simulation_obj = simulation_obj)
                 cv.imwrite("{}/images/{}_{}.png".format(self.destination_folder, self.thread_name,iters), simulation_obj.image)
