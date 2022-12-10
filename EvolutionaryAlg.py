@@ -181,15 +181,15 @@ class genetic_alg(threading.Thread):
             print(self.thread_name, " - iteration num = ", iters, ", best Fitness is = ", max(self.fitnesses), "explore = ", explore)
             mate_pop = self.update_prob(self.fitnesses)
             if iters < 500:
-                Mutation_obj = Inversion()
-                Recombination_obj = CutAndCrossFill()
+                Mutation_obj = Swap()
+                Recombination_obj = Cycle1()
                 Pm = 1
                 explore = True
                 dived_into = 4
                 Pc = 1
             elif iters > 500 and iters < 1000:
-                Recombination_obj = Order()
-                Mutation_obj = Inversion()
+                Recombination_obj = Cycle1()
+                Mutation_obj = Swap()
                 dived_into = 2
                 # explore = False
                 Pm = 0.8
@@ -224,7 +224,7 @@ class genetic_alg(threading.Thread):
                 simulation_obj = simulation()
                 self.simulation(people = self.pop[self.fitnesses.index(max(self.fitnesses))][:], simulation_obj = simulation_obj)
                 cv.imwrite("{}/images/{}_{}.png".format(self.destination_folder, self.thread_name,iters), simulation_obj.image)
-            if iters%100 == 0:
+            if iters%500 == 0:
                 simulation_obj = simulation()
                 self.simulation(people = self.pop[self.fitnesses.index(max(self.fitnesses))][:], simulation_obj = simulation_obj)
                 cv.imwrite("{}/images/{}_{}.png".format(self.destination_folder, self.thread_name,iters), simulation_obj.image)

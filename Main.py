@@ -9,15 +9,15 @@ import time
 
 HowManyThread = 6
 Threads = []
-Output_Folder = "Problem 2"
+Output_Folder = "Problem 1"
 for Thread in range(HowManyThread):
     if Thread%2 == 0:
         Selection = 0
     else:
         Selection = 1
     # Selection = 0
-    pop_control_obj = pop_control2(150, "Data/P2.txt")
-    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob2([0, 13], pop_control_obj.XYDemand), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
+    pop_control_obj = pop_control(150, "Data/P1.txt")
+    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob1([-14, 9], pop_control_obj.XYDemand), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
 
 with open("{}/threads connections/Main Thread Order.txt".format(Output_Folder), "w") as f:
      f.write("Wait")
