@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+problem*/
 # Distribution / packaging
 .Python
 build/
