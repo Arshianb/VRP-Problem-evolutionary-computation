@@ -95,9 +95,9 @@ class genetic_alg(threading.Thread):
                 self.fitnesses = self.fitnesses[:int(len(self.fitnesses)/dived_into)]
                 mate_pop = self.update_prob(temp_fitness)
                 try:
-                    selected = np.random.choice(len(temp_population), size=self.pop_size-int(self.pop_size/dived_into)-len(childeren_fitnesses), p=mate_pop)
+                    selected = np.random.choice(len(temp_population), size=self.pop_size-int(self.pop_size/dived_into), p=mate_pop)
                 except:
-                    selected = np.random.choice(len(temp_population), size=self.pop_size-int(self.pop_size/dived_into)-len(childeren_fitnesses))
+                    selected = np.random.choice(len(temp_population), size=self.pop_size-int(self.pop_size/dived_into))
 
                 temp_population = np.array(temp_population)
                 temp_population = list(temp_population[selected])
@@ -184,7 +184,7 @@ class genetic_alg(threading.Thread):
                 Mutation_obj = Inversion()
                 Recombination_obj = CutAndCrossFill()
                 Pm = 1
-                explore = False
+                explore = True
                 dived_into = 4
                 Pc = 1
             elif iters > 500 and iters < 1000:
