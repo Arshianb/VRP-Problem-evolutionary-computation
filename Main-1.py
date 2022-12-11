@@ -3,7 +3,7 @@ from population_Control import *
 from Fitness import *
 from Mutation import *
 from Recombination import *
-from EvolutionaryAlg_2 import *
+from EvolutionaryAlg_1 import *
 import glob
 import time
 
