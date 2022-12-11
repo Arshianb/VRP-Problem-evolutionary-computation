@@ -126,5 +126,5 @@ def Problem2_plot(Main_path = "Problem 1\\best chromosome"):
     plt.show()
 
     
-# Problem1_plot(Main_path = "Problem 1\\best chromosome")
-Problem2_plot(Main_path = "Problem 2\\best chromosome")
+Problem1_plot(Main_path = "Problem 1\\best chromosome")
+# Problem2_plot(Main_path = "Problem 2\\best chromosome")
