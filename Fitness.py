@@ -207,7 +207,7 @@ class Fitness_func_for_prob3:
                     if not next_vehicle:
                         all_distance = all_distance + self.evaluate_distance(vehicles_last_position[vehicle-1], [self.XYDemand[0][gene], self.XYDemand[1][gene]])
                         if all_distance <= 200:
-                            Fitness = Fitness + 1 - 2*self.evaluate_distance(vehicles_last_position[vehicle-1], [self.XYDemand[0][gene], self.XYDemand[1][gene]])/200
+                            Fitness = Fitness + self.XYDemand[2] - 2*self.evaluate_distance(vehicles_last_position[vehicle-1], [self.XYDemand[0][gene], self.XYDemand[1][gene]])/200
                         vehicles_last_position[vehicle-1] = [self.XYDemand[0][gene], self.XYDemand[1][gene]]
 
                         if all_distance + self.evaluate_distance(vehicles_last_position[vehicle-1], [self.depoteLocation[0], self.depoteLocation[1]]) > 200:
