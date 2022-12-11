@@ -7,7 +7,7 @@ from EvolutionaryAlg import *
 import glob
 import time
 
-HowManyThread = 6
+HowManyThread = 8
 Threads = []
 Output_Folder = "Problem 2"
 for Thread in range(HowManyThread):
