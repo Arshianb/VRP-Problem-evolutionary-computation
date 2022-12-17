@@ -12,7 +12,7 @@ class simulation():
         self.each_squ = each_squ
         self.grid_dimension_x = grid_dimension_x
         self.grid_dimension_y = grid_dimension_y
-    def colored_specific_sq(self, x = 0, y = 0):
+    def colored_specific_sq(self, x = 0, y = 0, weight = 0.4):
         neg_x0 = 1
         neg_y0 = 1
         neg_x1 = 1
@@ -31,7 +31,7 @@ class simulation():
             neg_y1 = 1
         for i in np.arange(self.image.shape[0]/2 + x*self.each_squ[0] + neg_x0 * self.each_squ[0], self.image.shape[0]/2 + x*self.each_squ[0] + neg_x1 * self.each_squ[0], 1):
             for j in np.arange(self.image.shape[1]/2 + y*self.each_squ[1] + neg_y0 * self.each_squ[1], self.image.shape[1]/2 + y*self.each_squ[1] + neg_y1 * self.each_squ[1], 1):
-                self.image[int(j), int(i), :] = (240, 50, 230)
+                self.image[int(j), int(i), :] = (255 - weight*255, 0, weight*255)
     def draw_grid(self):
         for i in np.arange(0, self.image.shape[0], self.each_squ[0]):
             cv.line(self.image, [i, 0], [i, self.image.shape[1]], (50, 50, 50), 1)

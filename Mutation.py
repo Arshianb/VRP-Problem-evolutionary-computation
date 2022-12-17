@@ -14,6 +14,22 @@ class Swap():
             Chromosome[genes[1]] = temp_value
         return Chromosome
 
+def Mutation(state, Pm):
+    for i in range(len(state)):
+        random_shit = np.random.random()
+        # print("np.random.random() = ", random_shit)
+        if random_shit < Pm:
+            up_down = np.random.randint(-1, 3)
+            if state[i] + up_down < 0:
+                pass
+            elif state[i] + up_down > 2:
+                pass
+            else:
+                state[i] = state[i] + up_down
+
+            # print("state[i] = ", state[i])
+    return state
+
 
 class Inversion():
     def __init__(self):
