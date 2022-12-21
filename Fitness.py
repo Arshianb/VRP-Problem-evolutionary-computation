@@ -387,7 +387,7 @@ class Fitness_func_for_prob4:
                         # if temp_Fitness != 0:
                         #     Fitness = Fitness + temp_Fitness - (200 - all_distance)/temp_Fitness
                         temp_Fitness = temp_Fitness + DistanceFromClossest/100
-                        DistanceFromClossest = 0;
+                        DistanceFromClossest = 0
                         next_vehicle = True
                         all_distance = 0    
                     else:
@@ -512,9 +512,10 @@ class Fitness_func_for_prob4:
 
 
 class Fitness_func_for_prob5:
-    def __init__(self, depoteLocation = [[0, 0], [0, 0], [0, 0]], XYDemand = [[], [], []]):
+    def __init__(self, depoteLocation = [[0, 0], [0, 0], [0, 0]], XYDemand = [[], [], []], All_SortedDistances = [[]]):
         self.XYDemand = XYDemand
         self.depoteLocation = depoteLocation
+        self.All_SortedDistances = All_SortedDistances
         pass
     def evaluate_distance(self, state1 = [-25, 25], state2 = [20, 20]):
         return - (abs(state1[0] - state2[0]) + abs(state1[1] - state2[1]))
@@ -524,25 +525,33 @@ class Fitness_func_for_prob5:
         demand_vehicle_get = 0
         Fitness = 0
         index_gene = -1
+        DistanceFromClossest = 0
         vehicles_last_position_list = []
         vehicle_first_place = []
         for i in np.arange(len(people) - 11, len(people)):
             vehicles_last_position_list.append(vehicles_last_position[people[i]])
             vehicle_first_place.append(vehicles_last_position[people[i]])
+        index = -1
         for gene in people:
+            index +=1
             index_gene+=1
             if index_gene > len(self.XYDemand[0])-1:
                 break 
             while True:
                 if demand_vehicle_get<=100:
+                    
+                    if index > 0:
+                        howFar = self.All_SortedDistances[people[index-1]].index(gene)
+                        DistanceFromClossest =  DistanceFromClossest + howFar
                     Fitness = Fitness + self.evaluate_distance(vehicles_last_position_list[vehicle-1], [self.XYDemand[0][gene], self.XYDemand[1][gene]])
                     vehicles_last_position_list[vehicle-1] = [self.XYDemand[0][gene], self.XYDemand[1][gene]]
                     demand_vehicle_get = demand_vehicle_get + self.XYDemand[2][gene]
                     break
                 else:
-                    Fitness = Fitness + self.evaluate_distance(vehicles_last_position_list[vehicle-1], vehicle_first_place[vehicle-1])
+                    Fitness = Fitness + self.evaluate_distance(vehicles_last_position_list[vehicle-1], vehicle_first_place[vehicle-1]) - DistanceFromClossest/100
                     vehicles_last_position_list[vehicle-1] = vehicle_first_place[vehicle-1]
                     demand_vehicle_get = 0
+                    DistanceFromClossest = 0
                     vehicle+=1
                     if vehicle == 12:
                         vehicle = 1

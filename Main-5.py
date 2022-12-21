@@ -8,7 +8,7 @@ import glob
 import time
 
 
-HowManyThread = 3
+HowManyThread = 5
 Threads = []
 Output_Folder = "Problem 5"
 for Thread in range(HowManyThread):
@@ -17,8 +17,8 @@ for Thread in range(HowManyThread):
     # else:
     #     Selection = 1
     Selection = 1
-    pop_control_obj = pop_control5(100, "Data/P5.txt")
-    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob5([[31, 6], [-31, 7], [25, -10]], pop_control_obj.XYDemand), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
+    pop_control_obj = pop_control5(200, "Data/P5.txt")
+    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob5([[31, 6], [-31, 7], [25, -10]], pop_control_obj.XYDemand, pop_control_obj.All_SortedDistances), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
 
 with open("{}/threads connections/Main Thread Order.txt".format(Output_Folder), "w") as f:
      f.write("Wait")

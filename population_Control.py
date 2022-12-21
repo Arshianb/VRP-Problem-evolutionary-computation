@@ -64,6 +64,7 @@ class pop_control5():
                     Y.append(int(cols[2]))
                     demand.append(int(cols[3][:cols[3].find("\n")]))
         self.XYDemand = [X, Y, demand]
+        self.All_SortedDistances = SortEachchro(X, Y)
 
     def creat_population_prob(self):
         self.population = []
