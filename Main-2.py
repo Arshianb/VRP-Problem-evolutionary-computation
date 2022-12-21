@@ -3,21 +3,21 @@ from population_Control import *
 from Fitness import *
 from Mutation import *
 from Recombination import *
-from EvolutionaryAlg_6 import *
+from EvolutionaryAlg_2 import *
 import glob
 import time
 
-HowManyThread = 3
+HowManyThread = 5
 Threads = []
-Output_Folder = "Problem 6"
+Output_Folder = "Problem 2"
 for Thread in range(HowManyThread):
-    # if Thread%2 == 0:
-    #     Selection = 0
-    # else:
-    #     Selection = 1
-    Selection = 1
-    pop_control_obj = pop_control6(100, "Data/P6.txt")
-    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob6([[11,36], [19, -41]], pop_control_obj.XYDemand), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
+    if Thread%2 == 0:
+        Selection = 0
+    else:
+        Selection = 1
+    # Selection = 0
+    pop_control_obj = pop_control(100, "Data/P2.txt")
+    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob2([0, 13], pop_control_obj.XYDemand, pop_control_obj.All_SortedDistances), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
 
 with open("{}/threads connections/Main Thread Order.txt".format(Output_Folder), "w") as f:
      f.write("Wait")
@@ -47,3 +47,4 @@ for big_itation in range(50):
             
             
             
+exit()

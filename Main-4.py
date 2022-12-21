@@ -3,7 +3,7 @@ from population_Control import *
 from Fitness import *
 from Mutation import *
 from Recombination import *
-from EvolutionaryAlg_3 import *
+from EvolutionaryAlg_4 import *
 import glob
 import time
 
@@ -16,8 +16,8 @@ for Thread in range(HowManyThread):
     else:
         Selection = 1
     # Selection = 0
-    pop_control_obj = pop_control2(200, "Data/P4.txt")
-    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob4([24, -7], pop_control_obj.XYDemand), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
+    pop_control_obj = pop_control(100, "Data/P4.txt")
+    Threads.append(genetic_alg(pop_control_obj,  Fitness_func_for_prob4([24, -7], pop_control_obj.XYDemand, pop_control_obj.All_SortedDistances), Selection, Output_Folder, "thread number {}".format(Thread), HowManyThread))
 
 with open("{}/threads connections/Main Thread Order.txt".format(Output_Folder), "w") as f:
      f.write("Wait")

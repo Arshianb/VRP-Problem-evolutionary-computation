@@ -200,6 +200,7 @@ class genetic_alg(threading.Thread):
         repetition_of_eq_fitnesses = 0
         repetition_of_not_eq_fitnesses = 0
         Thread_Recombination_after_whichIter = 200
+        Tabu_list = self.pop
         while (iters < 5000):
             iters +=1
             print(self.thread_name, " - iteration num = ", iters, ", best Fitness is = ", max(self.fitnesses), "explore = ", explore)
@@ -211,7 +212,7 @@ class genetic_alg(threading.Thread):
                 explore = False
                 Pc = 1
             elif iters > 500 and iters < 1000:
-                Recombination_obj = Order()
+                Recombination_obj = Cycle1()
                 self.Mutation_obj = Inversion()
                 explore = False
                 Pm = 0.8
@@ -283,18 +284,18 @@ class genetic_alg(threading.Thread):
                 diffrence_Thereshold = 5
             if abs(self.fitnesses[0] - np.average(self.fitnesses)) < diffrence_Thereshold and repetition_of_eq_fitnesses < 10:
                 if iters < 500:
-                    self.Mutation_obj = Inversion()
+                    self.Mutation_obj = Scramble()
                 repetition_of_eq_fitnesses+=1
                 explore = True
                 dived_into = 2
                 repetition_of_not_eq_fitnesses = 0
                 if iters < 500:
-                    Recombination_obj = Order()
+                    Recombination_obj = CutAndCrossFill()
                 Pm = 1
             elif abs(self.fitnesses[0] - np.average(self.fitnesses)) < diffrence_Thereshold and repetition_of_eq_fitnesses >= 10:
                 repetition_of_not_eq_fitnesses = 0
                 if iters < 500:
-                    self.Mutation_obj = Scramble()
+                    self.Mutation_obj = Inversion()
                 repetition_of_eq_fitnesses+=1
                 explore = True
                 dived_into = 2
@@ -304,27 +305,10 @@ class genetic_alg(threading.Thread):
                     Recombination_obj = Order()
                 Pm = 1
             else:
-                self.Mutation_obj = Swap()
-                Recombination_obj = Cycle1()
+                # self.Mutation_obj = Swap()
+                # Recombination_obj = Cycle1()
                 # Pm = 1
                 repetition_of_eq_fitnesses = 0
-            # elif repetition_of_not_eq_fitnesses <= 10 and abs(self.fitnesses[0] - np.average(self.fitnesses)) > diffrence_Thereshold:
-                
-            #     if iters < 500:
-            #         self.Mutation_obj = Inversion()
-            #     repetition_of_eq_fitnesses = 0
-            #     repetition_of_not_eq_fitnesses +=1
-            #     if iters < 500:
-            #         Recombination_obj = CutAndCrossFill()
-            #     else:
-            #         Recombination_obj = Order()
-            #     Pm = 1
-            # elif abs(self.fitnesses[0] - np.average(self.fitnesses)) > diffrence_Thereshold and repetition_of_not_eq_fitnesses > 10:
-            #     # repetition_of_not_eq_fitnesses = 0
-            #     self.Mutation_obj = Swap()
-            #     Recombination_obj = Cycle1()
-            #     # Pm = 1
-            #     repetition_of_eq_fitnesses = 0
             temp_population = []
             temp_fitness = []
             for _ in range(self.pop_size):
@@ -343,9 +327,13 @@ class genetic_alg(threading.Thread):
                     child2 = [x-1 for x in child2] 
                     child1 = self.Mutation_obj.Mutate(child1, Pm)
                     child2 = self.Mutation_obj.Mutate(child2, Pm)
+                    # if child1 not in Tabu_list:
+                    #     Tabu_list.append(child1)
                     temp_population.append(child1)
-                    temp_population.append(child2)
                     temp_fitness.append(self.cac_fitness(child1))
+                    # if child2 not in Tabu_list:
+                    #     Tabu_list.append(child2)
+                    temp_population.append(child2)
                     temp_fitness.append(self.cac_fitness(child2))
             if explore:
                 self.Elitism(dived_into, temp_fitness, temp_population)

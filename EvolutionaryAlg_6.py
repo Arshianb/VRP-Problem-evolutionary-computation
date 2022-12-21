@@ -8,8 +8,9 @@ import os
 import threading
 import ast
 import glob
-import time
+from Recombination_for_depote import *
 
+import time
 class genetic_alg(threading.Thread):
     def __init__(self, pop_control_obj, Fitness_func_for_prob1_obj, Selection, saved_folder, thread_name, HowMany_Thread):
         threading.Thread.__init__(self)
@@ -85,12 +86,6 @@ class genetic_alg(threading.Thread):
         self.sort_fitnessAndPop()
         self.pop = self.pop[:self.pop_size]
         self.fitnesses = self.fitnesses[:self.pop_size]
-
-    def caculate_diffrence(self, p1, p2):
-        diff = 0
-        for gen_index in range(len(p1)):
-            diff = diff + abs(p1[gen_index] - p2[gen_index])
-        return diff
     def Elitism(self, dived_into, temp_fitness, temp_population):
         while True:
             if self.pop_size - int(self.pop_size/dived_into) < len(temp_fitness):
@@ -106,7 +101,8 @@ class genetic_alg(threading.Thread):
                     if abs(self.fitnesses[last_unchange_index] - self.fitnesses[i+1])<0.01:
                         diff = self.caculate_diffrence(self.pop[last_unchange_index], self.pop[i+1])
                         if diff < 50:
-                            self.pop[i+1] = Inversion().Mutate(self.pop[i+1], 1)
+                            self.pop[i+1][:len(self.pop[i+1])-7] = Inversion().Mutate(self.pop[i+1][:len(self.pop[i+1])-7], 1)
+                            self.pop[i+1][len(self.pop[i+1])-7:] = self.Mutation_obj1(self.pop[i+1][len(self.pop[i+1])-7:], 1)
                             self.fitnesses[i+1] = self.cac_fitness(self.pop[i+1])
                         else:
                             last_unchange_index = i+1
@@ -127,6 +123,11 @@ class genetic_alg(threading.Thread):
                 break
             else:
                 dived_into-=1
+    def caculate_diffrence(self, p1, p2):
+        diff = 0
+        for gen_index in range(len(p1)):
+            diff = diff + abs(p1[gen_index] - p2[gen_index])
+        return diff
     def RecombinationThreads(self):
         chromosomesThatShouldAppend = []
         FitnessesShouldAppend = []
@@ -200,44 +201,54 @@ class genetic_alg(threading.Thread):
         repetition_of_eq_fitnesses = 0
         repetition_of_not_eq_fitnesses = 0
         Thread_Recombination_after_whichIter = 200
-        # Tabu_list = self.pop
         while (iters < 5000):
             iters +=1
             print(self.thread_name, " - iteration num = ", iters, ", best Fitness is = ", max(self.fitnesses), "explore = ", explore)
             mate_pop = self.update_prob(self.fitnesses)
             if iters < 500:
                 self.Mutation_obj = Swap()
+                self.Mutation_obj1 = Mutation6
                 Recombination_obj = Cycle1()
+                Recombination_obj_depotes = Double_point_crossOver
                 Pm = 1
                 explore = False
                 Pc = 1
             elif iters > 500 and iters < 1000:
-                Recombination_obj = Cycle1()
+                Recombination_obj = Order()
+                self.Mutation_obj1 = Mutation6
                 self.Mutation_obj = Inversion()
+                Recombination_obj_depotes = Double_point_crossOver
                 explore = False
-                Pm = 0.8
+                Pm = 1
                 Pc = 1
             elif iters > 1000 and iters < 1500:
                 self.Mutation_obj = Swap()
-                Thread_Recombination_after_whichIter = 100
+                self.Mutation_obj1 = Mutation6
+                Recombination_obj_depotes = Double_point_crossOver
                 Recombination_obj = Cycle1()
                 explore = False
                 Pm = 0.8
                 Pc = 1
             elif iters > 1500 and iters < 2000:
                 self.Mutation_obj = Swap()
+                self.Mutation_obj1 = Mutation6
                 Recombination_obj = Cycle1()
+                Recombination_obj_depotes = Double_point_crossOver
                 explore = False
                 Pm = 0.8
                 Pc = 1
             elif iters > 2000 and iters < 2500:
                 self.Mutation_obj = Swap()
+                self.Mutation_obj1 = Mutation6
                 Recombination_obj = Cycle1()
+                Recombination_obj_depotes = Double_point_crossOver
                 Pm = 0.6
                 explore = False
                 Pc = 1
             elif iters > 2500 and iters < 3000:
                 self.Mutation_obj = Swap()
+                self.Mutation_obj1 = Mutation6
+                Recombination_obj_depotes = Double_point_crossOver
                 Recombination_obj = Cycle1()
                 explore = False
                 Pm = 0.6
@@ -276,21 +287,28 @@ class genetic_alg(threading.Thread):
                 writer = csv.writer(file)
                 writer.writerow([self.pop[self.fitnesses.index(max(self.fitnesses))], max(self.fitnesses), np.average(self.fitnesses)])
                 file.close()
+            # if "Problem 1" in self.destination_folder or "Problem 5" in self.destination_folder:
+            #     diffrence_Thereshold = 10
+            # elif "Problem 2" in self.destination_folder:
             diffrence_Thereshold = 1
+            # elif "Problem 3" in self.destination_folder:
+            #     diffrence_Thereshold = 5
+            # elif "Problem 4" in self.destination_folder:
+            #     diffrence_Thereshold = 5
             if abs(self.fitnesses[0] - np.average(self.fitnesses)) < diffrence_Thereshold and repetition_of_eq_fitnesses < 10:
                 if iters < 500:
-                    self.Mutation_obj = Scramble()
+                    self.Mutation_obj = Inversion()
                 repetition_of_eq_fitnesses+=1
                 explore = True
                 dived_into = 2
                 repetition_of_not_eq_fitnesses = 0
                 if iters < 500:
-                    Recombination_obj = CutAndCrossFill()
+                    Recombination_obj = Order()
                 Pm = 1
             elif abs(self.fitnesses[0] - np.average(self.fitnesses)) < diffrence_Thereshold and repetition_of_eq_fitnesses >= 10:
                 repetition_of_not_eq_fitnesses = 0
                 if iters < 500:
-                    self.Mutation_obj = Inversion()
+                    self.Mutation_obj = Scramble()
                 repetition_of_eq_fitnesses+=1
                 explore = True
                 dived_into = 2
@@ -300,10 +318,27 @@ class genetic_alg(threading.Thread):
                     Recombination_obj = Order()
                 Pm = 1
             else:
-                # self.Mutation_obj = Swap()
-                # Recombination_obj = Cycle1()
+                self.Mutation_obj = Swap()
+                Recombination_obj = Cycle1()
                 # Pm = 1
                 repetition_of_eq_fitnesses = 0
+            # elif repetition_of_not_eq_fitnesses <= 10 and abs(self.fitnesses[0] - np.average(self.fitnesses)) > diffrence_Thereshold:
+                
+            #     if iters < 500:
+            #         self.Mutation_obj = Inversion()
+            #     repetition_of_eq_fitnesses = 0
+            #     repetition_of_not_eq_fitnesses +=1
+            #     if iters < 500:
+            #         Recombination_obj = CutAndCrossFill()
+            #     else:
+            #         Recombination_obj = Order()
+            #     Pm = 1
+            # elif abs(self.fitnesses[0] - np.average(self.fitnesses)) > diffrence_Thereshold and repetition_of_not_eq_fitnesses > 10:
+            #     # repetition_of_not_eq_fitnesses = 0
+            #     self.Mutation_obj = Swap()
+            #     Recombination_obj = Cycle1()
+            #     # Pm = 1
+            #     repetition_of_eq_fitnesses = 0
             temp_population = []
             temp_fitness = []
             for _ in range(self.pop_size):
@@ -316,19 +351,24 @@ class genetic_alg(threading.Thread):
                     parent_1 = [x+1 for x in parent_1]
                     parent_2 = [x+1 for x in parent_2]
                     # child1, child2 = Recombination_obj.Recombination(parent_1, parent_2)
-                    child1, child2 = Recombination_obj.Recombination(parent_1, parent_2)
+                    child1, child2 = Recombination_obj.Recombination(parent_1[:len(parent_1)-7], parent_2[:len(parent_1)-7])
+                    child1_, child2_ = Recombination_obj_depotes(parent_1[len(parent_1)-7:], parent_2[len(parent_1)-7:])
+                    child1.extend(child1_)
+                    child2.extend(child2_)
                     # print(child1)
                     child1 = [x-1 for x in child1] 
                     child2 = [x-1 for x in child2] 
-                    child1 = self.Mutation_obj.Mutate(child1, Pm)
-                    child2 = self.Mutation_obj.Mutate(child2, Pm)
-                    # if child1 not in Tabu_list:
-                    #     Tabu_list.append(child1)
+                    child1_1 = self.Mutation_obj.Mutate(child1[:len(child1)-7], Pm)
+                    child2_1 = self.Mutation_obj.Mutate(child2[:len(child2)-7], Pm)
+                    child1_2 = self.Mutation_obj1(child1[len(child1)-7:], Pm)
+                    child2_2 = self.Mutation_obj1(child2[len(child1)-7:], Pm)
+                    child1_1.extend(child1_2)
+                    child2_1.extend(child2_2)
+                    child1 = child1_1
+                    child2 = child2_1
                     temp_population.append(child1)
-                    temp_fitness.append(self.cac_fitness(child1))
-                    # if child2 not in Tabu_list:
-                    #     Tabu_list.append(child2)
                     temp_population.append(child2)
+                    temp_fitness.append(self.cac_fitness(child1))
                     temp_fitness.append(self.cac_fitness(child2))
             if explore:
                 self.Elitism(dived_into, temp_fitness, temp_population)
